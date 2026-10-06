@@ -1,72 +1,10 @@
-import { useEffect, useRef } from "react"
+import { useEffect } from "react"
+import NavBar from "../../components/navbar"
+import Frame from "../../components/frame"
+import Footer from "../../components/footer"
 import "./home.css"
 
-const FRAME_COUNT = 59 // must match the number printed by `ls frames | wc -l`
-const frameSrc = (i: number) =>
-  `/frames/f_${String(i + 1).padStart(3, "0")}.jpg`
-
 export default function Home() {
-  const wrapRef = useRef<HTMLDivElement>(null)
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-
-  // Scroll-scrubbed hero frames
-  useEffect(() => {
-    const wrap = wrapRef.current
-    const canvas = canvasRef.current
-    const ctx = canvas?.getContext("2d")
-    if (!wrap || !canvas || !ctx) return
-
-    const images: HTMLImageElement[] = []
-    let current = 0
-    let target = 0
-    let lastDrawn = -1
-    let rafId = 0
-
-    for (let i = 0; i < FRAME_COUNT; i++) {
-      const img = new Image()
-      img.src = frameSrc(i)
-      if (i === 0) {
-        img.onload = () => {
-          canvas.width = img.naturalWidth
-          canvas.height = img.naturalHeight
-          ctx.drawImage(img, 0, 0)
-          lastDrawn = 0
-        }
-      }
-      images.push(img)
-    }
-
-    const updateTarget = () => {
-      const rect = wrap.getBoundingClientRect()
-      const total = wrap.offsetHeight - window.innerHeight
-      if (total <= 0) return
-      const progress = Math.max(0, Math.min(1, -rect.top / total))
-      target = progress * (FRAME_COUNT - 1)
-    }
-
-    const tick = () => {
-      current += (target - current) * 0.2
-      const idx = Math.round(current)
-      const img = images[idx]
-      if (idx !== lastDrawn && img && img.complete && canvas.width) {
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
-        lastDrawn = idx
-      }
-      rafId = requestAnimationFrame(tick)
-    }
-
-    window.addEventListener("scroll", updateTarget, { passive: true })
-    window.addEventListener("resize", updateTarget)
-    updateTarget()
-    rafId = requestAnimationFrame(tick)
-
-    return () => {
-      cancelAnimationFrame(rafId)
-      window.removeEventListener("scroll", updateTarget)
-      window.removeEventListener("resize", updateTarget)
-    }
-  }, [])
-
   // Mock forms
   useEffect(() => {
     const pairs: [string, string][] = [
@@ -93,51 +31,9 @@ export default function Home() {
 
   return (
     <>
-      <nav className="nav">
-        <a href="#top" className="wordmark">
-          Magic Mirror
-        </a>
+      <NavBar />
 
-        <ul className="nav-links">
-          <li>
-            <a href="#services">Services</a>
-          </li>
-          <li>
-            <a href="#book">Book</a>
-          </li>
-          <li>
-            <a href="#course">Course</a>
-          </li>
-          <li>
-            <a href="#visit">Visit</a>
-          </li>
-        </ul>
-      </nav>
-
-      <div id="top" className="hero-wrap" ref={wrapRef}>
-        <div className="hero-sticky">
-          <canvas ref={canvasRef} className="hero-video" />
-
-          <div className="hero-scrim"></div>
-
-          <div className="hero-copy">
-            <div className="hero-ctas">
-              <a href="#book" className="btn btn-gold">
-                Book an appointment
-              </a>
-
-              <a href="#course" className="btn btn-ghost">
-                Apply for the course
-              </a>
-            </div>
-          </div>
-
-          <div className="scroll-hint">
-            <span className="line"></span>
-            Scroll
-          </div>
-        </div>
-      </div>
+      <Frame />
 
       <section className="services" id="services">
         <div className="section-inner">
@@ -444,20 +340,7 @@ export default function Home() {
         </div>
       </section>
 
-      <footer>
-        <div>© 2026 Magic Mirror Barber & Salon — Hetauda-4</div>
-
-        <div>
-          <a
-            href="https://www.facebook.com/p/Magic-Mirror-61578855432208/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Facebook
-          </a>
-          &nbsp;·&nbsp; Shital Mahal Chowk, Hetauda-4
-        </div>
-      </footer>
+      <Footer />
     </>
   )
 }

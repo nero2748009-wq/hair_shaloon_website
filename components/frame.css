@@ -1,0 +1,108 @@
+/* Hero / scroll-scrubbed frames */
+
+.hero-wrap {
+  position: relative;
+  height: 400vh;
+}
+
+.hero-sticky {
+  position: sticky;
+  top: 0;
+
+  height: 100vh;
+  overflow: hidden;
+
+  background: #0d1815;
+}
+
+.hero-video {
+  position: absolute;
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+  opacity: 0.96;
+}
+
+.hero-scrim {
+  position: absolute;
+  inset: 0;
+
+  background: linear-gradient(
+    180deg,
+    rgba(13, 24, 21, 0.4) 0%,
+    rgba(13, 24, 21, 0.05) 32%,
+    rgba(13, 24, 21, 0.1) 65%,
+    rgba(13, 24, 21, 0.65) 100%
+  );
+}
+
+.hero-copy {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  padding: 0 clamp(20px, 5vw, 56px) clamp(40px, 7vh, 80px);
+
+  color: #fff;
+}
+
+.hero-ctas {
+  display: flex;
+  gap: 14px;
+  margin-top: 28px;
+  flex-wrap: wrap;
+}
+
+.scroll-hint {
+  position: absolute;
+  right: clamp(20px, 5vw, 56px);
+  bottom: clamp(40px, 7vh, 80px);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 12px;
+  letter-spacing: 0.02em;
+}
+
+.scroll-hint .line {
+  width: 1px;
+  height: 46px;
+
+  background: rgba(255, 255, 255, 0.4);
+
+  position: relative;
+  overflow: hidden;
+}
+
+.scroll-hint .line::after {
+  content: "";
+
+  position: absolute;
+  left: 0;
+  top: 0;
+
+  width: 100%;
+  height: 14px;
+
+  background: var(--gold);
+
+  animation: travel 1.8s ease-in-out infinite;
+}
+
+@keyframes travel {
+  0% {
+    transform: translateY(-20px);
+  }
+
+  100% {
+    transform: translateY(46px);
+  }
+}
