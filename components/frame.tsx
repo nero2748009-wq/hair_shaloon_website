@@ -1,69 +1,72 @@
 import { useEffect, useRef } from "react"
 import "./frame.css"
 
-/* Frames live in public/frames/ as f_001.jpg, f_002.jpg ...
-   FRAME_COUNT must match the number printed by: ls public/frames | wc -l */
-const FRAME_COUNT = 59
-const frameSrc = (i: number) =>
-  `/frames/f_${String(i + 1).padStart(3, "0")}.jpg`
+/* Video lives in public/ and is served from "/".
+   It should be encoded with every frame as a keyframe (see ffmpeg -g 1). */
+const VIDEO_SRC = "/barber-shop.mp4"
 
 export default function Frame() {
   const wrapRef = useRef<HTMLDivElement>(null)
-  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const videoRef = useRef<HTMLVideoElement>(null)
 
-  // Scroll-scrubbed hero frames
+  // Scroll-scrubbed hero video
   useEffect(() => {
     const wrap = wrapRef.current
-    const canvas = canvasRef.current
-    const ctx = canvas?.getContext("2d")
-    if (!wrap || !canvas || !ctx) return
+    const video = videoRef.current
+    if (!wrap || !video) return
 
-    const images: HTMLImageElement[] = []
-    let current = 0
-    let target = 0
-    let lastDrawn = -1
+    let duration = 0
+    let target = 0 // video time the scroll position asks for
+    let current = 0 // smoothed time we actually seek to
     let rafId = 0
 
-    for (let i = 0; i < FRAME_COUNT; i++) {
-      const img = new Image()
-      img.src = frameSrc(i)
-      if (i === 0) {
-        img.onload = () => {
-          canvas.width = img.naturalWidth
-          canvas.height = img.naturalHeight
-          ctx.drawImage(img, 0, 0)
-          lastDrawn = 0
-        }
-      }
-      images.push(img)
-    }
-
+    // Convert scroll position (0 to 1) into a video time
     const updateTarget = () => {
       const rect = wrap.getBoundingClientRect()
       const total = wrap.offsetHeight - window.innerHeight
-      if (total <= 0) return
+      if (total <= 0 || !duration) return
       const progress = Math.max(0, Math.min(1, -rect.top / total))
-      target = progress * (FRAME_COUNT - 1)
+      target = progress * duration
     }
 
+    const onMeta = () => {
+      duration = video.duration || 0
+      updateTarget()
+    }
+
+    // iOS won't paint a frame until play() has been called once
+    const primeFrame = () => {
+      const p = video.play()
+      if (p && p.then) p.then(() => video.pause()).catch(() => {})
+    }
+
+    // Runs every screen refresh
     const tick = () => {
-      current += (target - current) * 0.2
-      const idx = Math.round(current)
-      const img = images[idx]
-      if (idx !== lastDrawn && img && img.complete && canvas.width) {
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
-        lastDrawn = idx
+      if (duration) {
+        // 0.15 = how tightly we follow scroll. 1 = instant, lower = floatier
+        current += (target - current) * 0.15
+
+        // Only start a new seek when the previous one has finished.
+        // Piling up seeks is what makes the video lag behind the scroll.
+        if (!video.seeking && Math.abs(current - video.currentTime) > 1 / 60) {
+          video.currentTime = current
+        }
       }
       rafId = requestAnimationFrame(tick)
     }
 
+    video.addEventListener("loadedmetadata", onMeta)
+    video.addEventListener("loadeddata", primeFrame)
+    if (video.readyState >= 1) onMeta()
+
     window.addEventListener("scroll", updateTarget, { passive: true })
     window.addEventListener("resize", updateTarget)
-    updateTarget()
     rafId = requestAnimationFrame(tick)
 
     return () => {
       cancelAnimationFrame(rafId)
+      video.removeEventListener("loadedmetadata", onMeta)
+      video.removeEventListener("loadeddata", primeFrame)
       window.removeEventListener("scroll", updateTarget)
       window.removeEventListener("resize", updateTarget)
     }
@@ -72,7 +75,14 @@ export default function Frame() {
   return (
     <div id="top" className="hero-wrap" ref={wrapRef}>
       <div className="hero-sticky">
-        <canvas ref={canvasRef} className="hero-video" />
+        <video
+          ref={videoRef}
+          className="hero-video"
+          src={VIDEO_SRC}
+          muted
+          playsInline
+          preload="auto"
+        />
 
         <div className="hero-scrim"></div>
 

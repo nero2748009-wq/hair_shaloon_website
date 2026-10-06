@@ -2,6 +2,7 @@ import { useEffect } from "react"
 import NavBar from "../../components/navbar"
 import Frame from "../../components/frame"
 import Footer from "../../components/footer"
+// import Hero from "../../components/hero"
 import "./home.css"
 
 export default function Home() {
@@ -32,7 +33,6 @@ export default function Home() {
   return (
     <>
       <NavBar />
-
       <Frame />
 
       <section className="services" id="services">

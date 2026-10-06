@@ -1,29 +1,48 @@
-/* Hero / scroll-scrubbed frames */
+/* Hero / scroll-scrubbed video */
 
+/* Tall wrapper = the scroll distance. Taller = slower animation. */
 .hero-wrap {
   position: relative;
   height: 400vh;
 }
 
 .hero-sticky {
+  /* Tuning knobs for the video placement */
+  --hero-bg: #34504a;      /* must match the video's background colour */
+  --subject-x: 0.31;       /* where the man's centre sits in the video: 0 = left edge, 1 = right edge */
+  --video-ratio: 1.7778;   /* video width / height (16:9) */
+  --h: min(100vh, 140vw);  /* video height: full height on desktop, shrinks on phones */
+
   position: sticky;
   top: 0;
 
   height: 100vh;
   overflow: hidden;
 
-  background: #0d1815;
+  background: var(--hero-bg);
 }
 
 .hero-video {
   position: absolute;
-  inset: 0;
+  bottom: 0;
 
-  width: 100%;
-  height: 100%;
+  height: var(--h);
+  width: calc(var(--h) * var(--video-ratio));
+
+  /* Shift the video so the man's centre lands on the screen's centre */
+  left: calc(50% - var(--h) * var(--video-ratio) * var(--subject-x));
 
   object-fit: cover;
-  opacity: 0.96;
+
+  /* Fade the video's edges into the background colour so no seam shows */
+  -webkit-mask-image:
+    linear-gradient(to right, transparent, #000 8%, #000 92%, transparent),
+    linear-gradient(to bottom, transparent, #000 8%);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(to right, transparent, #000 8%, #000 92%, transparent),
+    linear-gradient(to bottom, transparent, #000 8%);
+  mask-composite: intersect;
 }
 
 .hero-scrim {

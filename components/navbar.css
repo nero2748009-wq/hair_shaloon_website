@@ -1,3 +1,9 @@
+/* ========================================
+   Navbar
+   Phones: wordmark + hamburger, links drop down in a panel
+   Desktop (760px+): wordmark left, links in a row on the right
+======================================== */
+
 .nav {
   position: fixed;
   top: 0;
@@ -5,13 +11,17 @@
   right: 0;
   z-index: 50;
 
+  /* Text inverts against whatever is behind it (video, light sections) */
+  mix-blend-mode: difference;
+}
+
+/* The visible bar: wordmark on the left, toggle/links on the right */
+.nav-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
 
   padding: 22px clamp(20px, 5vw, 56px);
-
-  mix-blend-mode: difference;
 }
 
 .wordmark {
@@ -22,24 +32,114 @@
   color: #fff;
 }
 
+/* ---------- Hamburger button ---------- */
+.nav-toggle {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+
+  width: 40px;
+  height: 40px;
+  padding: 8px;
+
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.nav-toggle span {
+  display: block;
+  height: 2px;
+  background: #fff;
+  transition: transform 0.25s ease, opacity 0.2s ease;
+}
+
+/* Morph the three lines into an X when open */
+.nav.open .nav-toggle span:nth-child(1) {
+  transform: translateY(8px) rotate(45deg);
+}
+.nav.open .nav-toggle span:nth-child(2) {
+  opacity: 0;
+}
+.nav.open .nav-toggle span:nth-child(3) {
+  transform: translateY(-8px) rotate(-45deg);
+}
+
+/* ---------- Links: dropdown panel on phones ---------- */
 .nav-links {
-  display: none;
-  gap: 28px;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
 
   list-style: none;
   margin: 0;
-  padding: 0;
+  padding: 8px clamp(20px, 5vw, 56px) 24px;
+
+  background: var(--bg-deep, #142420);
+
+  /* Hidden until the menu is open */
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px);
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
 }
 
 .nav-links a {
+  display: block;
+  padding: 14px 0;
+
   color: #fff;
   text-decoration: none;
-  font-size: 14px;
+  font-size: 18px;
   font-weight: 500;
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
 }
 
+/* Phones only: open state. Turn off the colour inversion and give the
+   whole bar a solid background so the panel and wordmark stay readable. */
+@media (max-width: 759px) {
+  .nav.open {
+    mix-blend-mode: normal;
+    background: var(--bg-deep, #142420);
+  }
+
+  .nav.open .nav-links {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    pointer-events: auto;
+  }
+}
+
+/* ---------- Desktop ---------- */
 @media (min-width: 760px) {
+  /* No hamburger */
+  .nav-toggle {
+    display: none;
+  }
+
+  /* Links become a normal row in the bar */
   .nav-links {
+    position: static;
     display: flex;
+    gap: 28px;
+
+    padding: 0;
+    background: none;
+
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    pointer-events: auto;
+  }
+
+  .nav-links a {
+    padding: 0;
+    font-size: 14px;
+    border-bottom: 0;
   }
 }
