@@ -117,11 +117,23 @@
 }
 
 @keyframes travel {
-  0% {
-    transform: translateY(-20px);
+  0%   { transform: translateY(-20px); }
+  100% { transform: translateY(46px); }
+}
+
+/* Phones / narrow screens: fill the whole hero with video */
+@media (max-width: 768px) {
+  .hero-sticky {
+    --h: 100vh;
+    --subject-x: 0.36; /* aim at the face/beard instead of the whole body */
+    height: 100vh;
   }
 
-  100% {
-    transform: translateY(46px);
+  /* Better on mobile browsers where the URL bar changes the viewport */
+  @supports (height: 100svh) {
+    .hero-sticky {
+      --h: 100svh;
+      height: 100svh;
+    }
   }
 }
