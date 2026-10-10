@@ -13,6 +13,9 @@
     "moduleResolution": "bundler",
     "jsx": "react-jsx",
     "rootDirs": [".", "./.react-router/types"],
+    "allowJs": true,
+    "checkJs": false,
+    "maxNodeModuleJsDepth": 1,
     "paths": {
       "~/*": ["./app/*"]
     },

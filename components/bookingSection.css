@@ -1,0 +1,402 @@
+/* BookingSection.css
+   Every colour reads your global tokens first (--forest, --olive, --gold, --ink, --paper)
+   and falls back to the values below, so this works with or without your global stylesheet. */
+
+#book {
+  --b-forest: var(--forest, #013022);
+  --b-olive: var(--olive, #6b7a3a);
+  --b-gold: var(--gold, #c9a227);
+  --b-ink: var(--ink, #1a1a1a);
+  --b-paper: var(--paper, #faf8f3);
+  --b-line: rgba(26, 26, 26, 0.14);
+  --b-radius: 10px;
+
+  padding: clamp(3rem, 8vw, 6rem) 1.25rem;
+  background: var(--b-paper);
+  color: var(--b-ink);
+}
+
+#book .section-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* ---------- Heading block ---------- */
+
+#book .book-head {
+  max-width: 62ch;
+  margin-bottom: 2rem;
+}
+
+#book .kicker {
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--b-olive);
+  margin-bottom: 0.5rem;
+}
+
+#book .book-head h2 {
+  margin: 0 0 0.75rem;
+  font-size: clamp(1.9rem, 4vw, 2.75rem);
+  line-height: 1.1;
+  color: var(--b-forest);
+}
+
+#book .book-head p {
+  margin: 0 0 1.25rem;
+  line-height: 1.6;
+  color: rgba(26, 26, 26, 0.78);
+}
+
+#book .demo-note {
+  padding: 0.75rem 1rem;
+  border-left: 3px solid var(--b-gold);
+  background: rgba(201, 162, 39, 0.12);
+  border-radius: 0 var(--b-radius) var(--b-radius) 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+/* ---------- Layout ---------- */
+
+#book .book-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+#book .panel {
+  background: #fff;
+  border: 1px solid var(--b-line);
+  border-radius: 14px;
+  padding: clamp(1.1rem, 3vw, 1.75rem);
+}
+
+/* ---------- Calendar ---------- */
+
+#book .cal-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+#book .cal-top h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: var(--b-forest);
+}
+
+#book .cal-nav {
+  display: flex;
+  gap: 0.5rem;
+}
+
+#book .cal-nav button {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  border: 1px solid var(--b-line);
+  background: #fff;
+  color: var(--b-forest);
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 0.15s, border-color 0.15s;
+}
+
+#book .cal-nav button:hover:not(:disabled) {
+  background: var(--b-forest);
+  border-color: var(--b-forest);
+  color: #fff;
+}
+
+#book .cal-nav button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+#book .cal-week,
+#book .cal-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.35rem;
+}
+
+#book .cal-week {
+  margin-bottom: 0.4rem;
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: rgba(26, 26, 26, 0.55);
+}
+
+#book .cal-day {
+  position: relative;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: var(--b-radius);
+  background: transparent;
+  color: var(--b-ink);
+  font: inherit;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+}
+
+#book .cal-day.empty {
+  cursor: default;
+  pointer-events: none;
+}
+
+/* availability dots */
+#book .cal-day.open::after,
+#book .cal-day.few::after {
+  content: "";
+  position: absolute;
+  bottom: 18%;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  margin-left: -3px;
+  border-radius: 50%;
+}
+
+#book .cal-day.open::after {
+  background: var(--b-olive);
+}
+
+#book .cal-day.few::after {
+  background: var(--b-gold);
+  box-shadow: 0 0 0 1px rgba(1, 48, 34, 0.25);
+}
+
+#book .cal-day:hover:not(:disabled):not(.selected) {
+  border-color: var(--b-forest);
+  background: rgba(1, 48, 34, 0.05);
+}
+
+#book .cal-day.today {
+  font-weight: 700;
+  border-color: var(--b-line);
+}
+
+#book .cal-day.selected {
+  background: var(--b-forest);
+  border-color: var(--b-forest);
+  color: #fff;
+  font-weight: 600;
+}
+
+#book .cal-day.selected.open::after,
+#book .cal-day.selected.few::after {
+  background: var(--b-gold);
+  box-shadow: none;
+}
+
+#book .cal-day:disabled,
+#book .cal-day.disabled {
+  color: rgba(26, 26, 26, 0.3);
+  cursor: not-allowed;
+}
+
+#book .legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--b-line);
+  font-size: 0.85rem;
+  color: rgba(26, 26, 26, 0.75);
+}
+
+#book .legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+#book .legend i {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+}
+
+/* ---------- Time slots ---------- */
+
+#book .slots-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--b-forest);
+}
+
+#book .slots-sub {
+  margin: 0.2rem 0 1rem;
+  font-size: 0.9rem;
+  color: rgba(26, 26, 26, 0.65);
+}
+
+#book .slots {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+#book .slot {
+  padding: 0.65rem 0.5rem;
+  border: 1px solid var(--b-line);
+  border-radius: var(--b-radius);
+  background: #fff;
+  color: var(--b-ink);
+  font: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+}
+
+#book .slot:hover {
+  border-color: var(--b-forest);
+}
+
+#book .slot.selected {
+  background: var(--b-forest);
+  border-color: var(--b-forest);
+  color: #fff;
+}
+
+#book .slots-empty {
+  grid-column: 1 / -1;
+  padding: 1.25rem 1rem;
+  border: 1px dashed var(--b-line);
+  border-radius: var(--b-radius);
+  text-align: center;
+  font-size: 0.9rem;
+  color: rgba(26, 26, 26, 0.6);
+}
+
+/* ---------- Form ---------- */
+
+#book form {
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--b-line);
+}
+
+#book .summary {
+  margin-bottom: 1rem;
+  padding: 0.7rem 0.9rem;
+  border-radius: var(--b-radius);
+  background: rgba(1, 48, 34, 0.06);
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: var(--b-forest);
+  color: #fff;
+}
+
+#book .field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 0.9rem;
+}
+
+#book .field label {
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+#book .field input,
+#book .field select {
+  width: 100%;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid var(--b-line);
+  border-radius: var(--b-radius);
+  background: #fff;
+  color: var(--b-ink);
+  font: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+#book .field input:focus,
+#book .field select:focus {
+  outline: none;
+  border-color: var(--b-forest);
+  box-shadow: 0 0 0 3px rgba(1, 48, 34, 0.15);
+}
+
+#book .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 0.85rem 1.25rem;
+  border: 1px solid transparent;
+  border-radius: var(--b-radius);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s, opacity 0.15s;
+}
+
+#book .btn-forest {
+  background: var(--b-forest);
+  color: #fff;
+}
+
+#book .btn-forest:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--b-forest) 85%, #000);
+}
+
+#book .btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+#book .confirm-msg {
+  margin-top: 0.9rem;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: var(--b-forest);
+}
+
+#book .confirm-msg:empty {
+  display: none;
+}
+
+/* ---------- Keyboard focus ---------- */
+
+#book button:focus-visible {
+  outline: 2px solid var(--b-gold);
+  outline-offset: 2px;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 860px) {
+  #book .book-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 420px) {
+  #book .cal-days,
+  #book .cal-week {
+    gap: 0.2rem;
+  }
+  #book .cal-day {
+    font-size: 0.85rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #book * {
+    transition: none !important;
+  }
+}

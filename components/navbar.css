@@ -1,10 +1,19 @@
 /* ========================================
    Navbar
-   Phones: wordmark + hamburger, links drop down in a panel
-   Desktop (760px+): wordmark left, links in a row on the right
+   Phones: logo + hamburger, links drop down in a panel
+   Desktop (760px+): logo left, links in a row on the right
 ======================================== */
 
+/* Anchor links land below the fixed bar instead of underneath it */
+html {
+  scroll-padding-top: 72px;
+  scroll-behavior: smooth;
+}
+
 .nav {
+  --nav-bg: var(--bg-deep, #142420);
+  --nav-pad-x: clamp(20px, 5vw, 56px);
+
   position: fixed;
   top: 0;
   left: 0;
@@ -15,21 +24,28 @@
   mix-blend-mode: difference;
 }
 
-/* The visible bar: wordmark on the left, toggle/links on the right */
+/* The visible bar: logo on the left, toggle/links on the right */
 .nav-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
 
-  padding: 22px clamp(20px, 5vw, 56px);
+  min-height: 64px;
+  padding: 4px var(--nav-pad-x);
 }
 
-.wordmark {
-  font-family: "Fraunces", serif;
-  font-size: 20px;
-  font-weight: 600;
-  text-decoration: none;
-  color: #fff;
+/* ---------- Logo ---------- */
+.logo {
+  display: inline-flex;
+  align-items: center;
+}
+
+.logo img {
+  display: block;
+  width: 120px;
+  height: auto;
+  /* The old margin-left: -50px pushed the logo off-screen on phones.
+     If the image has empty space on its left, crop it in the file instead. */
 }
 
 /* ---------- Hamburger button ---------- */
@@ -39,9 +55,10 @@
   justify-content: center;
   gap: 6px;
 
-  width: 40px;
-  height: 40px;
-  padding: 8px;
+  width: 44px;
+  height: 44px;
+  margin-right: -8px; /* lines up the bars with the page edge padding */
+  padding: 10px;
 
   background: none;
   border: 0;
@@ -55,7 +72,7 @@
   transition: transform 0.25s ease, opacity 0.2s ease;
 }
 
-/* Morph the three lines into an X when open */
+/* Morph the three lines into an X when open (6px gap + 2px line = 8px) */
 .nav.open .nav-toggle span:nth-child(1) {
   transform: translateY(8px) rotate(45deg);
 }
@@ -75,11 +92,12 @@
 
   list-style: none;
   margin: 0;
-  padding: 8px clamp(20px, 5vw, 56px) 24px;
+  padding: 8px var(--nav-pad-x) 24px;
 
-  background: var(--bg-deep, #142420);
+  background: var(--nav-bg);
 
-  /* Hidden until the menu is open */
+  /* Hidden until the menu is open.
+     visibility:hidden also removes the links from the tab order. */
   opacity: 0;
   visibility: hidden;
   transform: translateY(-8px);
@@ -99,12 +117,23 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.12);
 }
 
+.nav-links li:last-child a {
+  border-bottom: 0;
+}
+
+/* Keyboard focus */
+.nav a:focus-visible,
+.nav-toggle:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 4px;
+}
+
 /* Phones only: open state. Turn off the colour inversion and give the
-   whole bar a solid background so the panel and wordmark stay readable. */
+   whole bar a solid background so the panel and logo stay readable. */
 @media (max-width: 759px) {
   .nav.open {
     mix-blend-mode: normal;
-    background: var(--bg-deep, #142420);
+    background: var(--nav-bg);
   }
 
   .nav.open .nav-links {
@@ -117,6 +146,10 @@
 
 /* ---------- Desktop ---------- */
 @media (min-width: 760px) {
+  .logo img {
+    width: 150px;
+  }
+
   /* No hamburger */
   .nav-toggle {
     display: none;
@@ -138,8 +171,29 @@
   }
 
   .nav-links a {
-    padding: 0;
+    padding: 4px 0;
     font-size: 14px;
     border-bottom: 0;
+
+    /* Underline grows in on hover and focus */
+    background: linear-gradient(currentColor, currentColor) left bottom / 0 1px no-repeat;
+    transition: background-size 0.25s ease;
+  }
+
+  .nav-links a:hover,
+  .nav-links a:focus-visible {
+    background-size: 100% 1px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .nav-toggle span,
+  .nav-links,
+  .nav-links a {
+    transition: none;
   }
 }

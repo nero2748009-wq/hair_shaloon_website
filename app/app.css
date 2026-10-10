@@ -1,0 +1,22 @@
+:root {
+  --bg: #013022;
+  --bg-deep: #142420;
+  --panel: #203b34;
+  --panel-line: rgba(243, 239, 230, 0.12);
+
+  --text: #f3efe6;
+  --muted: #bdccc4;
+  --muted-dim: #85988f;
+
+  --mint: #6fd0c4;
+
+  --gold: #e0a84a;
+  --gold-dim: #a97a30;
+}
+
+body{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  
+}

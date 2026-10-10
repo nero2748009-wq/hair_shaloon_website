@@ -1,6 +1,7 @@
 /* Hero / scroll-scrubbed video */
 
-/* Tall wrapper = the scroll distance. Taller = slower animation. */
+/* Tall wrapper = the scroll distance. Taller = slower animation.
+   It contains ONLY the sticky hero; nothing else may live inside it. */
 .hero-wrap {
   position: relative;
   height: 400vh;
@@ -8,7 +9,7 @@
 
 .hero-sticky {
   /* Tuning knobs for the video placement */
-  --hero-bg: #34504a;      /* must match the video's background colour */
+  --hero-bg: #013022;      /* must match the video's background colour */
   --subject-x: 0.31;       /* where the man's centre sits in the video: 0 = left edge, 1 = right edge */
   --video-ratio: 1.7778;   /* video width / height (16:9) */
   --h: min(100vh, 140vw);  /* video height: full height on desktop, shrinks on phones */
@@ -58,15 +59,40 @@
   );
 }
 
+/* ---------- Hero text ---------- */
+
 .hero-copy {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: 0;
+  bottom: 120px;
 
   padding: 0 clamp(20px, 5vw, 56px) clamp(40px, 7vh, 80px);
 
   color: #fff;
+}
+
+.hero-eyebrow {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+.hero-copy h1 {
+  font-size: clamp(34px, 7vw, 84px);
+  line-height: 1.05;
+  max-width: 14ch;
+  overflow-wrap: break-word;
+}
+
+.hero-sub {
+  max-width: 44ch;
+  margin: 18px 0 0;
+  font-size: clamp(15px, 1.6vw, 18px);
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .hero-ctas {
@@ -121,12 +147,60 @@
   100% { transform: translateY(46px); }
 }
 
-/* Phones / narrow screens: fill the whole hero with video */
+/* ---------- About (sits after the hero, not inside it) ---------- */
+
+.about {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 40px;
+  align-items: center;
+}
+
+@media (min-width: 840px) {
+  .about {
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: 72px;
+  }
+}
+
+/* The image had no size limit, so it rendered at its natural width and
+   pushed the page sideways. Keep it inside its column. */
+.about img {
+  display: block;
+  width: 100%;
+  max-width: 360px;
+  height: auto;
+  margin: 0 auto;
+}
+
+.about h2 {
+  font-size: clamp(28px, 4vw, 44px);
+  margin-bottom: 18px;
+}
+
+.about p {
+  margin: 0;
+  max-width: 56ch;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.65;
+}
+
+/* ---------- Phones / narrow screens: fill the whole hero with video ---------- */
 @media (max-width: 768px) {
   .hero-sticky {
     --h: 100vh;
     --subject-x: 0.36; /* aim at the face/beard instead of the whole body */
     height: 100vh;
+  }
+
+  .hero-copy {
+    bottom: 0;
+  }
+
+  /* The text now reaches the bottom edge, so the hint would sit on top of the buttons */
+  .scroll-hint {
+    display: none;
   }
 
   /* Better on mobile browsers where the URL bar changes the viewport */

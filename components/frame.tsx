@@ -1,8 +1,6 @@
 import { useEffect, useRef } from "react"
 import "./frame.css"
 
-/* Video lives in public/ and is served from "/".
-   It should be encoded with every frame as a keyframe (see ffmpeg -g 1). */
 const VIDEO_SRC = "/barber-shop.mp4"
 
 export default function Frame() {
@@ -73,36 +71,62 @@ export default function Frame() {
   }, [])
 
   return (
-    <div id="top" className="hero-wrap" ref={wrapRef}>
-      <div className="hero-sticky">
-        <video
-          ref={videoRef}
-          className="hero-video"
-          src={VIDEO_SRC}
-          muted
-          playsInline
-          preload="auto"
-        />
+    <>
+      {/* The tall wrapper only holds the sticky video. It sets the scroll distance. */}
+      <div id="top" className="hero-wrap" ref={wrapRef}>
+        <div className="hero-sticky">
+          <video
+            ref={videoRef}
+            className="hero-video"
+            src={VIDEO_SRC}
+            muted
+            playsInline
+            preload="auto"
+          />
 
-        <div className="hero-scrim"></div>
+          <div className="hero-scrim"></div>
 
-        <div className="hero-copy">
-          <div className="hero-ctas">
-            <a href="#book" className="btn btn-gold">
-              Book an appointment
-            </a>
+          <div className="hero-copy">
+            <div className="hero-eyebrow">Haircuts &amp; Beards · Est. 2018</div>
+            <h1>Too clean to be stressed.</h1>
+            <p className="hero-sub">
+              Scroll and watch the cut come together — then take the chair yourself.
+            </p>
 
-            <a href="#course" className="btn btn-ghost">
-              Apply for the course
-            </a>
+            <div className="hero-ctas">
+              <a href="#book" className="btn btn-gold">
+                Book an appointment
+              </a>
+
+              <a href="#course" className="btn btn-ghost">
+                Apply for the course
+              </a>
+            </div>
+          </div>
+
+          <div className="scroll-hint">
+            <span className="line"></span>
+            Scroll
           </div>
         </div>
-
-        <div className="scroll-hint">
-          <span className="line"></span>
-          Scroll
-        </div>
       </div>
-    </div>
+
+      {/* About lives OUTSIDE the 400vh wrapper so it starts after the video
+          finishes instead of overlapping and spilling out of it */}
+      <section className="about-section">
+        <div className="section-inner about">
+          <img src="/2.png" alt="Moss Salon logo" />
+          <div>
+            <div className="kicker">About the shop</div>
+            <h2>A barber's chair, kept the old way since 2018.</h2>
+            <p>
+              Moss Salon is a neighbourhood barber shop and salon at Shital Mahal Chowk in
+              Hetauda-4. We focus on the things done well: a clean haircut, a beard shaped to
+              your face, colour that looks natural, and a proper face cleanse to finish.
+            </p>
+          </div>
+        </div>
+      </section>
+    </>
   )
 }
