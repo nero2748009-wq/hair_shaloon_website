@@ -13,7 +13,8 @@ export default function Footer() {
         >
           Facebook
         </a>
-        &nbsp;·&nbsp; Shital Mahal Chowk, Hetauda-4
+        &nbsp;·&nbsp; 2nd Floor, 13 Howes Street
+
       </div>
     </footer>
   )
