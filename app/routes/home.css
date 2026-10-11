@@ -291,23 +291,39 @@ section {
 
 /* ========================================
    Visit / Contact
+   Driven by --p (0 to 1) from useScrollProgress in home.tsx:
+   the details fade in one after another, and the map card rises in.
 ======================================== */
 
 .visit {
+  /* Fully visible if JavaScript is off */
+  --p: 0.6;
+
   background: #013022;
   border-top: 1px solid var(--panel-line);
 }
 
+/* Layout lives on .visit-grid only.
+   (Don't style the shared .section-inner class with display:flex: Services,
+   Booking and About all use it, and it would put their contents side by side.) */
 .visit-grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: 48px;
+
+  /* keeps the whole block centred on wide screens */
+  width: 100%;
+  max-width: 1120px;
+  margin-inline: auto;
 }
 
 @media (min-width: 840px) {
   .visit-grid {
     grid-template-columns: 1fr 1fr;
     gap: 72px;
+
+    /* the map card stretches to the same height as the text beside it */
+    align-items: stretch;
   }
 }
 
@@ -318,7 +334,12 @@ section {
 }
 
 .visit-detail {
+  --dp: clamp(0, calc((var(--p) - var(--s)) / var(--l)), 1);
+
   margin-bottom: 22px;
+
+  opacity: var(--dp);
+  transform: translateY(calc((1 - var(--dp)) * 16px));
 }
 
 .visit-detail-label {
@@ -339,32 +360,210 @@ section {
 
 .visit-detail-value a {
   text-decoration: underline;
-  text-decoration-color: var(--gold-dim);
+  text-underline-offset: 3px;
+  text-decoration-color: rgba(241, 235, 221, 0.45);
+  transition: text-decoration-color 0.3s ease;
+}
+
+.visit-detail-value a:hover {
+  text-decoration-color: var(--gold);
+}
+
+/* ---------- Map card ---------- */
+
+.map-wrap {
+  --mp: clamp(0, calc((var(--p) - var(--s)) / var(--l)), 1);
+
+  /* a column: map fills the space, address bar sits at the bottom */
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+
+  background: var(--panel);
+  border: 1px solid var(--panel-line);
+  border-radius: 6px;
+  overflow: hidden;
+
+  /* rises into place and opens from the bottom as you scroll */
+  opacity: var(--mp);
+  transform: translateY(calc((1 - var(--mp)) * 28px));
+  clip-path: inset(calc((1 - var(--mp)) * 14%) 0 0 0);
 }
 
 .map-frame {
-  border: 1px solid var(--panel-line);
-  border-radius: 6px;
-
+  position: relative;
+  isolation: isolate;
   overflow: hidden;
 
+  /* phones: a fixed shape */
   aspect-ratio: 4 / 3.1;
+  background: #013022;
+  cursor: pointer;
 }
 
+/* desktop: the map takes whatever height is left, never shorter than 340px */
+@media (min-width: 840px) {
+  .map-frame {
+    flex: 1;
+    aspect-ratio: auto;
+    min-height: 340px;
+  }
+}
+
+/* The map is turned into a dark, green-leaning version of itself so it matches the site.
+   It's positioned to fill its box so it always matches the box's size. */
 .map-frame iframe {
+  position: absolute;
+  inset: 0;
+  display: block;
   width: 100%;
   height: 100%;
-
   border: 0;
 
-  filter: grayscale(0.15) saturate(0.9);
+  filter: invert(0.92) hue-rotate(180deg) saturate(0.5) brightness(0.9) contrast(0.95);
+
+  /* no interaction until the map is clicked (stops it trapping page scroll on phones) */
+  pointer-events: none;
+}
+
+.map-frame.is-active iframe {
+  pointer-events: auto;
+}
+
+.map-frame.is-active {
+  cursor: default;
+}
+
+/* Green tint: colours the map in the site's green while keeping the map's light/dark detail */
+.map-frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+
+  background: #013022;
+  mix-blend-mode: color;
+  opacity: 0.6;
+
+  transition: opacity 0.5s ease;
+}
+
+/* Soft edges: the map melts into the card instead of ending in a hard line */
+.map-frame::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+
+  box-shadow: inset 0 0 70px 14px rgba(1, 48, 34, 0.75);
+}
+
+/* While you're exploring, ease the tint back so the map is easier to read */
+.map-frame.is-active::after {
+  opacity: 0.3;
+}
+
+.map-hint {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 3;
+  pointer-events: none;
+
+  padding: 7px 12px;
+
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--gold);
+
+  background: rgba(1, 48, 34, 0.85);
+  border: 1px solid var(--gold-dim);
+  border-radius: 999px;
+
+  backdrop-filter: blur(6px);
+  transition: opacity 0.3s ease;
+}
+
+.map-frame.is-active .map-hint {
+  opacity: 0;
+}
+
+/* Address bar under the map */
+.map-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+
+  padding: 16px 20px;
+
+  background: var(--panel);
+  border-top: 1px solid var(--panel-line);
+}
+
+.map-bar-label {
+  font-family: "Fraunces", serif;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.map-bar-text {
+  margin-top: 3px;
+
+  font-size: 13.5px;
+  color: var(--muted);
 }
 
 .map-link {
   display: inline-block;
-  margin-top: 14px;
 
-  font-size: 14px;
-  color: var(--mint);
-  text-decoration: underline;
+  padding: 10px 18px;
+
+  font-size: 13.5px;
+  font-weight: 700;
+  text-decoration: none;
+  color: var(--gold);
+
+  border: 1px solid var(--gold-dim);
+  border-radius: 4px;
+
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+.map-link:hover {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: #1c1304;
+}
+
+.map-link:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+
+@media (max-width: 480px) {
+  .map-frame {
+    aspect-ratio: 4 / 3.4;
+  }
+
+  /* button goes full width under the address on small phones */
+  .map-link {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+/* Reduced motion: no fades or slides, no tint transition */
+@media (prefers-reduced-motion: reduce) {
+  .map-frame::after,
+  .map-hint,
+  .map-link,
+  .visit-detail-value a {
+    transition: none;
+  }
 }
