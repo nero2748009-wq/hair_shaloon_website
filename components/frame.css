@@ -149,10 +149,27 @@
 
 /* ---------- About (sits after the hero, not inside it) ---------- */
 
+.about-section {
+  /* Colour tokens: change these to match your site.
+     --about-bg should be the same green as the hero so the two sections flow together. */
+  --about-bg: #013022;
+  --about-ink: #f1ebdd;    /* fully "read" text and heading */
+  --about-dim: #4f6f63;    /* text that hasn't been scrolled to yet */
+  --about-accent: var(--gold, #d9a441);
+
+  /* 0 to 1, written by the scroll code in Frame.tsx.
+     Defaults to 1 so the section is fully visible if JavaScript is off. */
+  --p: 1;
+
+  background: var(--about-bg);
+  color: var(--about-ink);
+  padding-block: clamp(80px, 14vw, 150px);
+}
+
 .about {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 40px;
+  gap: 44px;
   align-items: center;
 }
 
@@ -163,27 +180,125 @@
   }
 }
 
-/* The image had no size limit, so it rendered at its natural width and
-   pushed the page sideways. Keep it inside its column. */
-.about img {
-  display: block;
+/* The wrapper holds the size limit so the image can't push the page sideways.
+   It also acts as the "window" the logo is unveiled through. */
+.about-media {
+  --lp: clamp(0, calc((var(--p) - var(--s)) / var(--l)), 1);
+
   width: 100%;
   max-width: 360px;
-  height: auto;
   margin: 0 auto;
+  overflow: hidden;
+
+  /* wipes open from the top as you scroll */
+  clip-path: inset(0 0 calc((1 - var(--lp)) * 100%) 0);
 }
 
+.about-media img {
+  display: block;
+  width: 100%;
+  height: auto;
+
+  /* settles from a slight zoom */
+  transform: scale(calc(1.18 - 0.18 * var(--lp)));
+  will-change: transform;
+}
+
+.about-kicker {
+  --lp: clamp(0, calc((var(--p) - var(--s)) / var(--l)), 1);
+
+  color: var(--about-accent);
+  opacity: var(--lp);
+  transform: translateY(calc((1 - var(--lp)) * 12px));
+}
+
+/* Heading: each word slides up out of its own mask */
 .about h2 {
-  font-size: clamp(28px, 4vw, 44px);
-  margin-bottom: 18px;
+  font-size: clamp(30px, 4vw, 44px);
+  line-height: 1.12;
+  margin-bottom: 22px;
+  color: var(--about-ink);
 }
 
+.word {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  /* extra room so descenders (y, p, g) aren't clipped by the mask */
+  padding-bottom: 0.14em;
+  margin-bottom: -0.14em;
+}
+
+.word-inner {
+  --lp: clamp(0, calc((var(--p) - var(--s)) / var(--l)), 1);
+
+  display: inline-block;
+  transform: translateY(calc((1 - var(--lp)) * 110%));
+}
+
+/* Thin gold line that draws itself from left to right */
+.about-rule {
+  --lp: clamp(0, calc((var(--p) - var(--s)) / var(--l)), 1);
+
+  display: block;
+  width: 56px;
+  height: 2px;
+  margin-bottom: 24px;
+
+  background: var(--about-accent);
+  transform: scaleX(var(--lp));
+  transform-origin: left center;
+}
+
+/* Paragraph: every word fades from dim to full colour as you scroll */
 .about p {
   margin: 0;
   max-width: 56ch;
-  color: var(--muted);
-  font-size: 16px;
-  line-height: 1.65;
+  font-size: 17px;
+  line-height: 1.7;
+}
+
+.about-word {
+  --lp: clamp(0, calc((var(--p) - var(--s)) / var(--l)), 1);
+
+  color: color-mix(in srgb, var(--about-ink) calc(var(--lp) * 100%), var(--about-dim));
+}
+
+/* ---------- About on phones: a calmer, left-aligned editorial layout ---------- */
+@media (max-width: 839px) {
+  .about {
+    gap: 36px;
+    padding-inline: 4px;
+  }
+
+  /* logo sits on the same left edge as the text instead of floating in the middle */
+  .about-media {
+    max-width: 168px;
+    margin: 0;
+  }
+
+  .about h2 {
+    font-size: clamp(30px, 9vw, 40px);
+    line-height: 1.12;
+    letter-spacing: -0.01em;
+    margin-bottom: 20px;
+  }
+
+  .about-rule {
+    margin-bottom: 22px;
+  }
+
+  .about p {
+    font-size: 16.5px;
+    line-height: 1.75;
+  }
+}
+
+/* Reduced motion: no scrubbing, everything fully visible */
+@media (prefers-reduced-motion: reduce) {
+  .about-section {
+    --p: 1;
+  }
 }
 
 /* ---------- Phones / narrow screens: fill the whole hero with video ---------- */

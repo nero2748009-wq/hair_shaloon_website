@@ -1,0 +1,240 @@
+/* ---------- Shop photo band ----------
+   Sits between Services and Booking. The photo is darkened and blended into the page
+   green so the text on top stays easy to read, drifts slowly as you scroll (parallax),
+   and opens like a curtain when it arrives. All of it is driven by --p (0 to 1)
+   from useScrollProgress. */
+
+.shop-band {
+  /* Tuning knobs */
+  --shop-edge-top: #013022;      /* colour of the Services section above */
+  --shop-edge-bottom: var(--bg); /* colour of the Booking section below */
+  --shop-focus: 50% 50%;         /* which part of the photo stays in view: x y */
+  --shop-dim: 0.58;              /* how dark the photo is: 0 = untouched, 1 = black */
+
+  --shop-ink: #f6f1e6;           /* heading */
+  --shop-ink-soft: rgba(246, 241, 230, 0.84); /* supporting text */
+  --shop-accent: var(--gold, #d9a441);
+
+  /* Fully revealed if JavaScript is off */
+  --p: 0.6;
+
+  /* each value goes 0 to 1 during its own slice of the scroll */
+  --lp: clamp(0, calc(var(--p) / 0.35), 1);              /* curtain opening */
+  --cp: clamp(0, calc((var(--p) - 0.3) / 0.2), 1);       /* kicker, heading, line */
+  --cp2: clamp(0, calc((var(--p) - 0.36) / 0.2), 1);     /* supporting text */
+  --cp3: clamp(0, calc((var(--p) - 0.42) / 0.2), 1);     /* button */
+
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+
+  /* beats the global "section" padding */
+  padding: 0;
+  height: clamp(440px, 82svh, 760px);
+
+  background: var(--shop-edge-top);
+}
+
+.shop-frame {
+  position: absolute;
+  inset: 0;
+
+  /* curtain: starts as a smaller window and opens to full size */
+  clip-path: inset(
+    calc((1 - var(--lp)) * 14%) calc((1 - var(--lp)) * 7%)
+  );
+}
+
+/* Taller than the band so there's spare picture to drift through */
+.shop-media {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -15%;
+  height: 130%;
+}
+
+.shop-media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: var(--shop-focus);
+
+  /* slow drift while scrolling + a gentle settle from a slight zoom */
+  transform: translateY(calc((0.5 - var(--p)) * 14%))
+    scale(calc(1.14 - 0.14 * var(--lp)));
+  will-change: transform;
+
+  /* a little darker and calmer before any overlay is added */
+  filter: brightness(0.82) saturate(0.8) contrast(1.05);
+}
+
+/* Layers on top of the photo, bottom layer last:
+   1. page green fading in at the top and bottom edges so the band blends in
+   2. a soft dark vignette that is strongest behind the text in the middle
+   3. an even dark tint over the whole picture (this is the --shop-dim knob) */
+.shop-frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+
+  background:
+    linear-gradient(
+      to bottom,
+      var(--shop-edge-top) 0%,
+      transparent 24%,
+      transparent 62%,
+      rgba(1, 48, 34, 0.6) 84%,
+      var(--shop-edge-bottom) 100%
+    ),
+    radial-gradient(
+      ellipse 70% 60% at 50% 50%,
+      rgba(3, 14, 11, 0.5) 0%,
+      rgba(3, 14, 11, 0) 100%
+    ),
+    rgba(3, 20, 15, var(--shop-dim));
+}
+
+/* ---------- Caption: centred over the photo ---------- */
+
+.shop-caption {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+
+  padding: 0 clamp(20px, 6vw, 56px);
+  color: var(--shop-ink);
+
+  /* soft shadow keeps letters crisp even over the brightest part of the photo */
+  text-shadow: 0 2px 28px rgba(0, 0, 0, 0.5);
+}
+
+.shop-kicker {
+  color: var(--shop-accent);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+
+  opacity: var(--cp);
+  transform: translateY(calc((1 - var(--cp)) * 16px));
+}
+
+.shop-caption h2 {
+  margin: 14px 0 0;
+  max-width: 17ch;
+
+  font-size: clamp(32px, 5.6vw, 64px);
+  line-height: 1.08;
+  letter-spacing: -0.015em;
+  color: var(--shop-ink);
+
+  opacity: var(--cp);
+  transform: translateY(calc((1 - var(--cp)) * 28px));
+}
+
+/* thin gold line that draws outward from the centre */
+.shop-rule {
+  display: block;
+  width: 64px;
+  height: 2px;
+  margin: 26px auto 0;
+
+  background: var(--shop-accent);
+  transform: scaleX(var(--cp));
+  transform-origin: center;
+}
+
+.shop-sub {
+  margin: 22px 0 0;
+  max-width: 44ch;
+
+  font-size: clamp(15px, 1.6vw, 18px);
+  line-height: 1.65;
+  color: var(--shop-ink-soft);
+
+  opacity: var(--cp2);
+  transform: translateY(calc((1 - var(--cp2)) * 18px));
+}
+
+.shop-cta {
+  margin-top: 30px;
+
+  /* the button keeps its own look; text shadow would blur it */
+  text-shadow: none;
+
+  opacity: var(--cp3);
+  transform: translateY(calc((1 - var(--cp3)) * 18px));
+}
+
+@media (max-width: 700px) {
+  .shop-band {
+    height: clamp(460px, 78svh, 600px);
+  }
+
+  /* a little less curtain on narrow screens so the photo isn't cropped too hard */
+  .shop-frame {
+    clip-path: inset(
+      calc((1 - var(--lp)) * 8%) calc((1 - var(--lp)) * 4%)
+    );
+  }
+
+  /* phones get a slightly darker photo because the text covers more of it */
+  .shop-band {
+    --shop-dim: 0.66;
+  }
+
+  .shop-caption h2 {
+    max-width: 14ch;
+  }
+}
+
+/* ---------- Services: small hover touch ---------- */
+
+.svc-card {
+  position: relative;
+  transition: background-color 0.4s ease;
+}
+
+/* gold line draws across the top of the card */
+.svc-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+
+  background: var(--gold);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.svc-card:hover::before {
+  transform: scaleX(1);
+}
+
+.svc-num {
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.svc-card:hover .svc-num {
+  transform: translateX(6px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .svc-card,
+  .svc-card::before,
+  .svc-num {
+    transition: none;
+  }
+}

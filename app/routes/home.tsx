@@ -1,6 +1,7 @@
 import NavBar from "../../components/navbar"
 import Frame from "../../components/frame"
 import Footer from "../../components/footer"
+import ShopBand from "../../components/shopBand"
 import "./home.css"
 import BookingSection from "../../components/bokingSection"
 
@@ -47,6 +48,9 @@ export default function Home() {
         </div>
       </section>
 
+      {/* The shop photo: a breather between "what we do" and "book a chair" */}
+      <ShopBand />
+
       <BookingSection />
 
       <section className="visit" id="visit">
@@ -59,37 +63,31 @@ export default function Home() {
             <div className="visit-detail">
               <div className="visit-detail-label">Address</div>
               <div className="visit-detail-value">
-                4 Shital Mahal Chowk, Hetauda-4, Nepal
+                Daffodil Street, Tingen City
               </div>
             </div>
 
             <div className="visit-detail">
               <div className="visit-detail-label">Phone</div>
               <div className="visit-detail-value">
-                <a href="tel:+9779845011004">+977 984-5011004</a>
+                <a href="tel:+977 0000000000">+977 0000000000</a>
                 <br />
-                <a href="tel:+9779811216701">+977 981-1216701</a>
+                <a href="tel:+9779811216701">+977 0000000000</a>
               </div>
             </div>
 
             <div className="visit-detail">
               <div className="visit-detail-label">Email</div>
               <div className="visit-detail-value">
-                <a href="mailto:sumantheeng58@gmail.com">
-                  sumantheeng58@gmail.com
-                </a>
+                <a href="mailto:abc@gmail.com">moss@gmail.com</a>
               </div>
             </div>
 
             <div className="visit-detail">
               <div className="visit-detail-label">Facebook</div>
               <div className="visit-detail-value">
-                <a
-                  href="https://www.facebook.com/p/Magic-Mirror-61578855432208/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Magic Mirror on Facebook
+                <a href="#" target="_blank" rel="noopener noreferrer">
+                  Moss
                 </a>
               </div>
             </div>
@@ -98,11 +96,13 @@ export default function Home() {
           <div>
             <div className="map-frame">
               <iframe
-                src="https://maps.google.com/maps?q=Shital%20Mahal%20Chowk%2C%20Hetauda%2C%20Nepal&output=embed"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2970.09361978615!2d12.4894761!3d41.89084365!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x132f61b6fc6433df%3A0x165f79d5d2332163!2sColosseo%2C%2000184%20Roma%20RM%2C%20Italy!5e0!3m2!1sen!2snp!4v1791709369086!5m2!1sen!2snp"
+                className="absolute top-0 left-0 w-full h-full border-0"
+                allowFullScreen={true}
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
-                title="Magic Mirror location map"
-              ></iframe>
+                title="Colosseum Map"
+              />
             </div>
 
             <a

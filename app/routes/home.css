@@ -92,7 +92,7 @@ section {
 ======================================== */
 
 .services {
-  background: var(--panel);
+  background: #013022;
 
   border-top: 1px solid var(--panel-line);
   border-bottom: 1px solid var(--panel-line);
@@ -294,7 +294,7 @@ section {
 ======================================== */
 
 .visit {
-  background: var(--panel);
+  background: #013022;
   border-top: 1px solid var(--panel-line);
 }
 
